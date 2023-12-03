@@ -1,8 +1,11 @@
 import express from "express";
 import cors from "cors";
 import session from "express-session";
+import mongoose from "mongoose";
+import "dotenv/config.js";
 
-
+const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || process.env.LOCAL_DB_STRING;
+mongoose.connect(CONNECTION_STRING);
 const app = express();
 
 app.use(
