@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
-const schema = new mongoose.Schema({
+const usersSchema = new mongoose.Schema({
   username: {
     type: String,
-    default: "Unknown User",
+    // don't need default because it's required on signup
+    // default: "Unknown User",
     required: true,
   },
   password: {
@@ -14,10 +15,10 @@ const schema = new mongoose.Schema({
     type: String,
     default: "Unknown User",
   },
-  profilePicture: {
-    type: "BinData",
-    default: "gf1UcxdHTJ2HQ/EGQrO7mQ==",
-  },
+   profilePicture: {
+     type: Buffer,
+     default: Buffer.from("gf1UcxdHTJ2HQ/EGQrO7mQ==", 'base64'),
+   },
   personalBio: {
     type: String,
     default: "Tell us more about you!",
@@ -60,6 +61,6 @@ const schema = new mongoose.Schema({
     default: "USER",
     required: true,
   },
-});
+}, {collection:"users"});
 
 export default schema;

@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
-const schema = new mongoose.Schema({
+const adminsSchema = new mongoose.Schema({
   username: {
     type: String,
-    default: "Unknown User",
+    // don't need default because it's required on signup
+    // default: "Unknown User",
     required: true,
   },
   password: {
@@ -21,8 +22,8 @@ const schema = new mongoose.Schema({
     default: "Unknown User",
   },
   profilePicture: {
-    type: "BinData",
-    default: "gf1UcxdHTJ2HQ/EGQrO7mQ==",
+    type: Buffer,
+    default: Buffer.from("gf1UcxdHTJ2HQ/EGQrO7mQ==", 'base64'),
   },
   personalBio: {
     type: String,
@@ -66,6 +67,6 @@ const schema = new mongoose.Schema({
     default: "ADMIN",
     required: true,
   },
-});
+}, {collection:"admins"});
 
-export default schema;
+export default adminsSchema;
