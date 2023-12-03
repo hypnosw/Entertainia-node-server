@@ -5,8 +5,6 @@ import * as enterpriseDao from "./enterpriseUsers/dao.js";
 // let currentUser = null;
 
 function UserRoutes(app) {
-
-  
   // admin's privillage
   const findAllUsers = async (req, res) => {
     const users = await adminDao.findAllUsers();
@@ -44,13 +42,28 @@ function UserRoutes(app) {
   };
 
   const signup = async (req, res) => {
-    const {username, }
-    const user = await dao.findUserByUsername(req.body.username);
-    if (user) {
-      res.status(400).json({ message: "Username already taken" });
+    const { username, role } = req.body;
+    let user;
+    if (role === "USER") {
+      user = await userDao.findUserByUsername(username);
+    } else if (role === "ADMIN") {
+      user = await adminDao.findUserByUsername(username);
+    } else if (role === "ENTERPRISE") {
+      user = await enterpriseDao.findUserByUsername(username);
     }
-    currentUser = await dao.createUser(req.body);
-    res.json(currentUser);
+    if (user) {
+      res.status(400).json({ message: "Username already existed" });
+      return;
+    }
+    let newUser;
+    if (role === "USER") {
+      newUser = await userDao.createUser(req.body);
+    } else if (role === "ADMIN") {
+      newUser = await adminDao.createUser(req.body);
+    } else if (role === "ENTERPRISE") {
+      newUser = await enterpriseDao.createUser(req.body);
+    }
+    res.json(newUser);
   };
 
   const profile = async (req, res) => {
@@ -64,6 +77,7 @@ function UserRoutes(app) {
 
   app.post("/api/users/signout", signout);
   app.post("/api/users/signin", signin);
+  app.post("/api/users/signup", signup);
   app.post("/api/users/profile", profile);
 
   // admin's

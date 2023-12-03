@@ -4,6 +4,7 @@ import session from "express-session";
 import mongoose from "mongoose";
 import "dotenv/config.js";
 import Entertainia from "./src/entertainia.js";
+import UserRoutes from "./userEntity/routes.js";
 
 // DB_CONNECTION_STRING should be the remote atlas string, LOCAL is local string
 const CONNECTION_STRING =
@@ -36,5 +37,7 @@ console.log("Hello World!");
 
 // /hello to test if server is working
 Entertainia(app);
+UserRoutes(app);
 
-app.listen(process.env.PORT || 4000);
+// app.listen(process.env.PORT || 4000);
+app.listen(4000);
