@@ -4,8 +4,17 @@ import session from "express-session";
 import mongoose from "mongoose";
 import "dotenv/config.js";
 
+// DB_CONNECTION_STRING should be the remote atlas string, LOCAL is local string
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || process.env.LOCAL_DB_STRING;
-mongoose.connect(CONNECTION_STRING);
+mongoose
+    .connect(CONNECTION_STRING)
+    .then(() => {
+        console.log('Connected to the database');
+    })
+    .catch((error) => {
+        console.error('Error connecting to the database:', error);
+    });
+
 const app = express();
 
 app.use(
