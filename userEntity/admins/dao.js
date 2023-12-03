@@ -1,14 +1,28 @@
 import model from "./model.js";
 
+// signup
+export const createUser = (user) => model.create(user);
+
+// admin's special function
 export const findAllUsers = () => model.find();
-export const findUserById = (id) => model.findById(id); //model.find({ _id: id });
+
+// see other's profile
+export const findUserById = (id) => model.findById(id);
+
+// check whether name already exists at signup
 export const findUserByUsername = (username) =>
   model.findOne({ username: username });
-//   model.find({ username: username });
+
+// sign in to check whether there is such a user
 export const findUserByCredentials = (username, password) =>
   model.findOne({ username, password });
-export const findUsersByRole = (role) => model.find({ role: role });
-export const createUser = (user) => model.create(user);
+
+// profile setting
 export const updateUser = (id, user) =>
   model.updateOne({ _id: id }, { $set: user });
-export const deleteUser = (id) => model.deleteOne({ _id: id });
+
+// maybe a admin user's function
+export const findUsersByRole = (role) => model.find({ role: role });
+
+// export const createUser = (user) => model.create(user);
+// export const deleteUser = (id) => model.deleteOne({ _id: id });
