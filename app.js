@@ -3,6 +3,7 @@ import cors from "cors";
 import session from "express-session";
 import mongoose from "mongoose";
 import "dotenv/config.js";
+import Entertainia from "./src/entertainia.js";
 
 // DB_CONNECTION_STRING should be the remote atlas string, LOCAL is local string
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || process.env.LOCAL_DB_STRING;
@@ -39,4 +40,7 @@ app.use(session(sessionOptions));
 app.use(express.json());
 console.log("Hello World!");
 
-app.listen(5000);
+// /hello to test if server is working
+Entertainia(app);
+
+app.listen(process.env.PORT || 5000);
