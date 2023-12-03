@@ -25,8 +25,16 @@ function UserRoutes(app) {
   };
 
   const signin = async (req, res) => {
-    const { username, password } = req.body;
-    const user = await dao.findUserByCredentials(username, password);
+    const { username, password, role } = req.body;
+    let user;
+    if (role === "USER") {
+      user = await userDao.findUserByCredentials(username, password);
+    } else if (role === "ADMIN") {
+      user = await adminDao.findUserByCredentials(username, password);
+    } else if (role === "ENTERPRISE") {
+      user = await enterpriseDao.findUserByCredentials(username, password);
+    }
+
     if (user) {
       const currentUser = user;
       req.session["currentUser"] = currentUser;
@@ -35,6 +43,7 @@ function UserRoutes(app) {
       res.sendStatus(403);
     }
   };
+
   const signout = async (req, res) => {
     // currentUser = null;
     req.session.destroy();
@@ -78,6 +87,7 @@ function UserRoutes(app) {
   app.post("/api/users/signout", signout);
   app.post("/api/users/signin", signin);
   app.post("/api/users/signup", signup);
+
   app.post("/api/users/profile", profile);
 
   // admin's
