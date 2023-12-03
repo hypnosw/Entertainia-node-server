@@ -29,31 +29,6 @@ function UserRoutes(app) {
     res.json(users);
   };
 
-  const createUser = async (req, res) => {
-    const { username, password, email, role } = req.params;
-    const user = await dao.createUser({
-      username,
-      password,
-      email,
-      role,
-    });
-    res.json(user);
-  };
-
-  const updateUser = async (req, res) => {
-    const id = req.params.id;
-    const newUser = req.body;
-    const status = await dao.updateUser(id, newUser);
-    const currentUser = await dao.findUserById(id);
-    req.session["currentUser"] = currentUser;
-    res.json(status);
-  };
-  const updateFirstName = async (req, res) => {
-    const id = req.params.id;
-    const newFirstName = req.params.newFirstName;
-    const status = await dao.updateUser(id, { firstName: newFirstName });
-    res.json(status);
-  };
   const deleteUser = async (req, res) => {
     const id = req.params.id;
     const status = await dao.deleteUser(id);
@@ -76,7 +51,16 @@ function UserRoutes(app) {
     req.session.destroy();
     res.sendStatus(200);
   };
-  const signup = async (req, res) => {};
+
+  const signup = async (req, res) => {
+    const user = await dao.findUserByUsername(req.body.username);
+    if (user) {
+      res.status(400).json({ message: "Username already taken" });
+    }
+    currentUser = await dao.createUser(req.body);
+    res.json(currentUser);
+  };
+
   const account = async (req, res) => {
     const currentUser = req.session["currentUser"];
     // if (!currentUser) {
@@ -91,14 +75,12 @@ function UserRoutes(app) {
   app.post("/api/users/account", account);
 
   app.delete("/api/users/:id", deleteUser);
-  app.get("/api/users/updateFirstName/:id/:newFirstName", updateFirstName);
-  app.get("/api/users/:username/:password/:email/:role", createUser);
+
   app.get("/api/users/role/:role", findUsersByRole);
   app.get("/api/users", findAllUsers);
   app.get("/api/users/:id", findUserById);
   app.get("/api/users/username/:username", findByUsername);
   app.get("/api/users/credentials/:username/:password", findUserByCredentials);
-  app.put("/api/users/:id", updateUser);
 }
 
 export default UserRoutes;
