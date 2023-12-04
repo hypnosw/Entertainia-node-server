@@ -3,7 +3,6 @@ import model from "./model.js";
 // signup
 export const createUser = (user) => model.create(user);
 
-// admin's special function
 export const findAllUsers = () => model.find();
 
 // see other's profile

@@ -3,6 +3,8 @@ import model from "./model.js";
 // signup
 export const createUser = (user) => model.create(user);
 
+export const findAllUsers = () => model.find();
+
 // see other's profile
 export const findUserById = (id) => model.findById(id);
 
