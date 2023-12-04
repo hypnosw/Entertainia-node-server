@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import "dotenv/config.js";
 import Entertainia from "./src/entertainia.js";
 import UserRoutes from "./userEntity/routes.js";
+import PostsRoutes from "./postsEntity/routes.js";
 
 // DB_CONNECTION_STRING should be the remote atlas string, LOCAL is local string
 const CONNECTION_STRING =
@@ -38,6 +39,9 @@ console.log("Hello World!");
 // /hello to test if server is working
 Entertainia(app);
 UserRoutes(app);
+PostsRoutes(app);
 
 // app.listen(process.env.PORT || 4000);
-app.listen(process.env.PORT || 4000);
+app.listen((process.env.PORT || 5000), ()=>{
+  console.log(`Server is running on port: ${process.env.PORT || 5000}`)
+} );
