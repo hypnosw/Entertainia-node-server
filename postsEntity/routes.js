@@ -26,7 +26,7 @@ const PostsRoutes = async (app)=>{
             // console.log(results.organic_results);
             res.json(response.data.organic_results);
         } catch(error){
-            res.send('Failed to connect to API');
+            res.sendStatus(401);
         }
 
     };
