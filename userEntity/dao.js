@@ -4,7 +4,6 @@ import model from "./model.js";
 export const createUser = (user) => model.create(user);
 
 export const findAllUsers = () => model.find();
-
 // see other's profile
 export const findUserById = (id) => model.findById(id);
 
@@ -13,8 +12,8 @@ export const findUserByUsername = (username) =>
   model.findOne({ username: username });
 
 // sign in to check whether there is such a user
-export const findUserByCredentials = (username, password) =>
-  model.findOne({ username, password });
+export const findUserByCredentials = (username, password, role) =>
+  model.findOne({ username, password, role });
 
 // profile setting
 export const updateUser = (id, user) =>
