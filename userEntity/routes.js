@@ -14,13 +14,13 @@ function UserRoutes(app) {
   // all type pf users can
   const findUserById = async (req, res) => {
     const id = req.params.id;
-    const user = await dao.findUserById(id);
+    const user = await userDao.findUserById(id);
     res.json(user);
   };
 
   const findByUsername = async (req, res) => {
     const username = req.params.username;
-    const user = await dao.findUserByUsername(username);
+    const user = await userDao.findUserByUsername(username);
     res.json(user);
   };
 
@@ -36,9 +36,10 @@ function UserRoutes(app) {
     }
 
     if (user) {
-      const currentUser = user;
-      req.session["currentUser"] = currentUser;
-      res.json(user);
+      // const currentUser = user;
+      req.session["currentUser"] = user;
+      // console.log(req.session["currentUser"]);
+      res.json(req.session["currentUser"]);
     } else {
       res.sendStatus(403);
     }
@@ -76,19 +77,20 @@ function UserRoutes(app) {
   };
 
   const profile = async (req, res) => {
-    const currentUser = req.session["currentUser"];
+
+    res.json(req.session['currentUser']);
+
     // if (!currentUser) {
     //   res.sendStatus(403);
     //   return;
     // }
-    res.json(currentUser);
   };
 
-  app.post("/api/users/signout", signout);
+  app.get("/api/users/signout", signout);
   app.post("/api/users/signin", signin);
   app.post("/api/users/signup", signup);
 
-  app.post("/api/users/profile", profile);
+  app.get("/api/users/profile", profile);
 
   // admin's
   app.get("/api/users", findAllUsers);
