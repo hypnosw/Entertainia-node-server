@@ -1,40 +1,31 @@
-import * as userDao from "./users/dao.js";
-import * as adminDao from "./admins/dao.js";
-import * as enterpriseDao from "./enterpriseUsers/dao.js";
+import * as Dao from "./dao.js";
 
 // let currentUser = null;
 
 function UserRoutes(app) {
   // admin's privillage
   const findAllUsers = async (req, res) => {
-    const users = await adminDao.findAllUsers();
+    const users = await Dao.findAllUsers();
     res.json(users);
   };
 
   // all type pf users can
   const findUserById = async (req, res) => {
     const id = req.params.id;
-    const user = await userDao.findUserById(id);
+    const user = await Dao.findUserById(id);
     res.json(user);
   };
 
   const findByUsername = async (req, res) => {
     const username = req.params.username;
-    const user = await userDao.findUserByUsername(username);
+    const user = await Dao.findUserByUsername(username);
     res.json(user);
   };
 
   const signin = async (req, res) => {
-    const { username, password, role } = req.body;
+    const { username, password } = req.body;
     let user;
-    if (role === "USER") {
-      user = await userDao.findUserByCredentials(username, password);
-    } else if (role === "ADMIN") {
-      user = await adminDao.findUserByCredentials(username, password);
-    } else if (role === "ENTERPRISE") {
-      user = await enterpriseDao.findUserByCredentials(username, password);
-    }
-
+    user = await Dao.findUserByCredentials(username, password);
     if (user) {
       // const currentUser = user;
       req.session["currentUser"] = user;
@@ -52,33 +43,25 @@ function UserRoutes(app) {
   };
 
   const signup = async (req, res) => {
-    const { username, role } = req.body;
+    const { username } = req.body;
     let user;
-    if (role === "USER") {
-      user = await userDao.findUserByUsername(username);
-    } else if (role === "ADMIN") {
-      user = await adminDao.findUserByUsername(username);
-    } else if (role === "ENTERPRISE") {
-      user = await enterpriseDao.findUserByUsername(username);
-    }
+    user = await Dao.findUserByUsername(username);
     if (user) {
+      console.log(user);
       res.status(400).json({ message: "Username already existed" });
       return;
     }
-    let newUser;
-    if (role === "USER") {
-      newUser = await userDao.createUser(req.body);
-    } else if (role === "ADMIN") {
-      newUser = await adminDao.createUser(req.body);
-    } else if (role === "ENTERPRISE") {
-      newUser = await enterpriseDao.createUser(req.body);
+    try {
+      let newUser;
+      newUser = await Dao.createUser(req.body);
+      res.json(newUser);
+    } catch (err) {
+      console.log(err);
     }
-    res.json(newUser);
   };
 
   const profile = async (req, res) => {
-
-    res.json(req.session['currentUser']);
+    res.json(req.session["currentUser"]);
 
     // if (!currentUser) {
     //   res.sendStatus(403);
@@ -86,18 +69,25 @@ function UserRoutes(app) {
     // }
   };
 
+  const updateUser = async (req, res) => {
+    const { userId } = req.params;
+    const status = await Dao.updateUser(userId, req.body);
+    //also update the current user here
+    const currentUser = await Dao.findUserById(userId);
+    req.session["currentUser"] = currentUser;
+    res.json(status);
+  };
+
   app.get("/api/users/signout", signout);
-  app.post("/api/users/signin", signin);
-  app.post("/api/users/signup", signup);
-
   app.get("/api/users/profile", profile);
-
   // admin's
   app.get("/api/users", findAllUsers);
-
   app.get("/api/users/:id", findUserById);
   // click on the name, redirect to the user's profile
   app.get("/api/users/username/:username", findByUsername);
+  app.put("/api/users/:userId", updateUser);
+  app.post("/api/users/signin", signin);
+  app.post("/api/users/signup", signup);
 }
 
 export default UserRoutes;
