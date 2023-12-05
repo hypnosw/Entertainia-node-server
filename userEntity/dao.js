@@ -12,8 +12,8 @@ export const findUserByUsername = (username) =>
   model.findOne({ username: username });
 
 // sign in to check whether there is such a user
-export const findUserByCredentials = (username, password) =>
-  model.findOne({ username, password });
+export const findUserByCredentials = (username, password, role) =>
+  model.findOne({ username, password, role });
 
 // profile setting
 export const updateUser = (id, user) =>
