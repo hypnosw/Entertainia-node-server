@@ -28,4 +28,18 @@ export const getPostsByKeyword = async (keyword) => {
 }
 
 
+export const createUser = (user) => model.create(user);
 
+
+//create post-Kay
+// export const createPost = (post) => model.create(post);
+export const createPost = async (post) => {
+    try {
+      const newPost = await model.create(post);
+      return newPost;
+    } catch (error) {
+      console.error("Error creating post:", error);
+      throw error;
+    }
+  };
+  
