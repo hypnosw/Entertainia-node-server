@@ -44,7 +44,7 @@ const postSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    author: mongoose.Schema.Types.ObjectId,
+    author: String,
     body: {
         type: String,
         required: true,

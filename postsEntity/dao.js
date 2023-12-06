@@ -18,7 +18,12 @@ export const getAllSortedPosts =  async ()=> {
     }
 };
 // obtain all posts from a certain user
-export const getPostsByUserID =  (id) =>  model.find({"author":id});
+export const getPostsByUserID =  async (id) => {
+  const response = await model.find({"author": id})
+  // console.log("model.find:" + response);
+  return response;
+};
+
 
 // find posts based on keywords, mostly used on searching page
 // as long as the title contains the keyword
