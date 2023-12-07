@@ -61,12 +61,11 @@ function UserRoutes(app) {
   };
 
   const profile = async (req, res) => {
-    res.json(req.session["currentUser"]);
-
-    // if (!currentUser) {
-    //   res.sendStatus(403);
-    //   return;
-    // }
+    try{
+      res.json(req.session["currentUser"]);
+    }catch(error){
+      console.log(error);
+    }
   };
 
   const updateUser = async (req, res) => {
