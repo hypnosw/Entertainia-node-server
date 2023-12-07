@@ -38,53 +38,57 @@ import mongoose from "mongoose";
 // }, {collection:"posts"});
 // export default postSchema;
 
-const postSchema = new mongoose.Schema({
+const postSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
     },
     author: String,
     body: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     //     images:[
     //     {type:String,
     //     required:true}
     // ],
     images: [
-        {
-            data: {
-                type: String,
-                required: true
-            },
-            contentType: {
-                type: String,
-                required: true
-            }
-        }
+      {
+        data: {
+          type: String,
+          required: true,
+        },
+        contentType: {
+          type: String,
+          required: true,
+        },
+      },
     ],
     numberOfLikes: {
-        type: Number,
-        default: 0
+      type: Number,
+      default: 0,
     },
     comment: [
-        {
-            userId: {
-                type: mongoose.Schema.Types.ObjectId,
-                required: true
-            },
-            content: {
-                type: String,
-                required: true
-            }
-        }
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+        },
+        content: {
+          type: String,
+          required: true,
+        },
+        commentDate: { type: Date },
+      },
     ],
     postDate: {
-        type: Date,
-        required: true
-    }
-}, { collection: "posts" });
+      type: Date,
+      required: true,
+    },
+  },
+  { collection: "posts" }
+);
 
 export default postSchema;
