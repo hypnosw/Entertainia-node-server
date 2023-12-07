@@ -41,6 +41,18 @@ const PostsRoutes = async (app) => {
       res.sendStatus(401);
     }
   };
+
+  const getPostByPostId = async (req, res) => {
+    const id = req.params.id;
+    try {
+      const result = await Post.findById(id);
+      console.log(result);
+      res.json(result);
+    } catch (error) {
+      console.log(error);
+      res.sendStatus(403);
+    }
+  };
   // const createPost = async (req, res) => {
   //   try {
   //     const { title, body, userId } = req.body;
@@ -154,6 +166,7 @@ const PostsRoutes = async (app) => {
   app.get("/api/sorted-posts-with-limit", getPostsWithLimit);
   app.post("/api/posts", upload.array("images", 1), createPost);
   app.post("/api/comment", createCommentForPost);
+  app.get("/api/posts/:id", getPostByPostId);
 };
 
 export default PostsRoutes;
