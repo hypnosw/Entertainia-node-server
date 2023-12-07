@@ -1,6 +1,8 @@
 import * as dao from "./dao.js";
 import axios from "axios";
 import multer from "multer"; //这个用来处理文件上传
+import User from '../userEntity/model.js';
+
 const API_KEY = process.env.GOOGLE_SEARCH_API_KEY;
 
 
@@ -36,31 +38,27 @@ const PostsRoutes = async (app)=>{
     };
     const createPost = async (req, res) => {
         try {
-          const { title, body } = req.body;
-          const postDate = new Date();
+          const { title, body, userId } = req.body;
+          const currentDate = new Date();
+          const postDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
           const images = req.files.map((file) => ({
             data: file.buffer.toString("base64"),
             contentType: file.mimetype,
           }));
-
-          const currentUser = req.session["currentUser"];
-          console.log(req.session["currentUser"]);
-          // if (!currentUser || !currentUser._id) {
-          //   return res.status(403).json({ success: false, message: "Forbidden" });
-          // }
-          // const currentUserId = currentUser._id;
-
           const post = await dao.createPost({
             title,
             body,
             postDate,
             images,
-            // author: currentUserId, 
-      
+            author: userId, 
             numberOfLikes:0,
             comment: []
           });
-    
+
+          const newPostId = post._id;
+          // await User.findByIdAndUpdate(userId, { $push: { posts: newPostId } });
+          const result = await User.findByIdAndUpdate(userId, { $push: { posts: newPostId } });
+          console.log(result);
           res.json(post);
         } catch (error) {
           console.error("Error during post creation:", error);
