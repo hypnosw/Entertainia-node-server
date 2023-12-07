@@ -10,15 +10,16 @@ import LikesRoutes from "./likes/routes.js";
 mongoose.connect(process.env.LOCAL_DB_STRING);
 
 // DB_CONNECTION_STRING should be the remote atlas string, LOCAL is local string
-const CONNECTION_STRING = process.env.DB_CONNECTION_STRING || process.env.LOCAL_DB_STRING;
+const CONNECTION_STRING =
+  process.env.DB_CONNECTION_STRING || process.env.LOCAL_DB_STRING;
 mongoose
-    .connect(CONNECTION_STRING)
-    .then(() => {
-      console.log('Connected to the database');
-    })
-    .catch((error) => {
-      console.error('Error connecting to the database:', error);
-    });
+  .connect(CONNECTION_STRING)
+  .then(() => {
+    console.log("Connected to the database");
+  })
+  .catch((error) => {
+    console.error("Error connecting to the database:", error);
+  });
 const app = express();
 
 app.use(cors({ credentials: true, origin: process.env.FRONTEND_URL }));
@@ -45,5 +46,6 @@ PostsRoutes(app);
 LikesRoutes(app);
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port: ${process.env.PORT || 5000}`)});
+
 
 
