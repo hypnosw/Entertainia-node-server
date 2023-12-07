@@ -17,6 +17,12 @@ const PostsRoutes = async (app)=>{
         res.json(response);
     };
 
+    const getPostByID = async(req, res)=>{
+        const {id} = req.query;
+        const response = await dao.getPostsByUserID(id);
+        res.json(response);
+    }
+
     const getAllPosts = async(req, res)=>{
         res.json(await dao.getAllPosts());
     }
@@ -66,6 +72,7 @@ const PostsRoutes = async (app)=>{
         }
       };
 
+      app.get('/api/postsbyid', getPostByID);
       app.get('/api/search-api-posts', getAPIResults);
       app.get('/api/search-organics', getPostsByKeyword);
       app.get('/api/posts', getAllPosts);
