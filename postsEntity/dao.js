@@ -1,5 +1,5 @@
 import model from "./model.js";
-
+import User from '../userEntity/model.js';
 // obtain all posts in the DB
 export const getAllPosts = () => model.find();
 
@@ -54,4 +54,18 @@ export const createPost = async (post) => {
       throw error;
     }
   };
+
+  export const likePost = async (postId, userId) => {
+    try {
+      // 更新帖子的 numberOfLikes
+      const updatedPost = await model.findByIdAndUpdate(postId, { $inc: { numberOfLikes: 1 } }, { new: true });
   
+      // 将帖子 ID 添加到用户的 likedPosts 数组中
+      await User.findByIdAndUpdate(userId, { $addToSet: { likedPosts: postId } });
+  
+      return updatedPost;
+    } catch (error) {
+      console.error('Error liking post:', error);
+      throw error;
+    }
+  };

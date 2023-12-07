@@ -62,7 +62,6 @@ const PostsRoutes = async (app)=>{
           });
 
           const newPostId = post._id;
-          // await User.findByIdAndUpdate(userId, { $push: { posts: newPostId } });
           const result = await User.findByIdAndUpdate(userId, { $push: { posts: newPostId } });
           console.log(result);
           res.json(post);
@@ -72,6 +71,20 @@ const PostsRoutes = async (app)=>{
         }
       };
 
+      const likePostRoute = async (req, res) => {
+        try {
+          const { postId, userId } = req.body;
+          console.log('Received like request for postId:', postId, 'from userId:', userId);
+          const updatedPost = await dao.likePost(postId, userId);
+          console.log('Post liked successfully. Updated post:', updatedPost);
+          res.json(updatedPost);
+        } catch (error) {
+          console.error('Error liking post:', error);
+          res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+      };
+      
+      app.post('/api/posts/like', likePostRoute);
       app.get('/api/postsbyid', getPostByID);
       app.get('/api/search-api-posts', getAPIResults);
       app.get('/api/search-organics', getPostsByKeyword);
@@ -79,7 +92,6 @@ const PostsRoutes = async (app)=>{
       app.get('/api/sortedposts', getAllSortedPosts);
       app.post("/api/posts", upload.array("images", 1), createPost);
       // 1 是最大上传文件数
-    
     }
     
     export default PostsRoutes;
