@@ -3,6 +3,7 @@ import axios from "axios";
 import multer from "multer"; //这个用来处理文件上传
 const API_KEY = process.env.GOOGLE_SEARCH_API_KEY;
 
+
 const storage = multer.memoryStorage(); // 在内存中存储文件
 const upload = multer({ storage: storage });
 
@@ -41,12 +42,23 @@ const PostsRoutes = async (app)=>{
             data: file.buffer.toString("base64"),
             contentType: file.mimetype,
           }));
-          
+
+          const currentUser = req.session["currentUser"];
+          console.log(req.session["currentUser"]);
+          // if (!currentUser || !currentUser._id) {
+          //   return res.status(403).json({ success: false, message: "Forbidden" });
+          // }
+          // const currentUserId = currentUser._id;
+
           const post = await dao.createPost({
             title,
             body,
             postDate,
             images,
+            // author: currentUserId, 
+      
+            numberOfLikes:0,
+            comment: []
           });
     
           res.json(post);
@@ -60,8 +72,8 @@ const PostsRoutes = async (app)=>{
       app.get('/api/search-organics', getPostsByKeyword);
       app.get('/api/posts', getAllPosts);
       app.get('/api/sortedposts', getAllSortedPosts);
-      app.post("/api/posts", upload.array("images", 5), createPost);
-      // 5 是最大上传文件数
+      app.post("/api/posts", upload.array("images", 1), createPost);
+      // 1 是最大上传文件数
     
     }
     
