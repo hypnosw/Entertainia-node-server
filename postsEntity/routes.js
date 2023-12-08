@@ -63,38 +63,12 @@ const PostsRoutes = async (app) => {
         currentDate.getMonth(),
         currentDate.getDate()
       );
+
       const images = req.files.map((file) => ({
         data: file.buffer.toString("base64"),
         contentType: file.mimetype,
       }));
 
-          const newPostId = post._id;
-          const result = await User.findByIdAndUpdate(userId, { $push: { posts: newPostId } });
-          console.log(result);
-          res.json(post);
-        } catch (error) {
-          console.error("Error during post creation:", error);
-          res.status(500).json({ success: false, message: "Internal server error" });
-        }
-      };
-
-      const likePostRoute = async (req, res) => {
-        try {
-          const { postId, userId } = req.body;
-          console.log('Received like request for postId:', postId, 'from userId:', userId);
-          const updatedPost = await dao.likePost(postId, userId);
-          console.log('Post liked successfully. Updated post:', updatedPost);
-          res.json(updatedPost);
-        } catch (error) {
-          console.error('Error liking post:', error);
-          res.status(500).json({ success: false, message: 'Internal server error' });
-        }
-      };
-      
-
-
-      // const currentUser = req.session["currentUser"];
-      // console.log(req.session["currentUser"]);
       const post = await dao.createPost({
         title,
         body,
@@ -104,15 +78,38 @@ const PostsRoutes = async (app) => {
         numberOfLikes: 0,
         comment: [],
       });
-      const newPostId = post._id;
+
       // await User.findByIdAndUpdate(userId, { $push: { posts: newPostId } });
-      try{const result = await User.findByIdAndUpdate(userId, {
+      const newPostId = post._id;
+      const result = await User.findByIdAndUpdate(userId, {
         $push: { posts: newPostId },
       });
       console.log(result);
       res.json(post);
     } catch (error) {
       console.error("Error during post creation:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+    // const currentUser = req.session["currentUser"];
+    // console.log(req.session["currentUser"]);
+  };
+
+  const likePostRoute = async (req, res) => {
+    try {
+      const { postId, userId } = req.body;
+      console.log(
+        "Received like request for postId:",
+        postId,
+        "from userId:",
+        userId
+      );
+      const updatedPost = await dao.likePost(postId, userId);
+      console.log("Post liked successfully. Updated post:", updatedPost);
+      res.json(updatedPost);
+    } catch (error) {
+      console.error("Error liking post:", error);
       res
         .status(500)
         .json({ success: false, message: "Internal server error" });
@@ -154,7 +151,7 @@ const PostsRoutes = async (app) => {
       console.error("Error during create comment:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
-  ;
+  };
 
   app.get("/api/postsbyid", getPostByID);
   app.get("/api/search-api-posts", getAPIResults);
@@ -165,7 +162,7 @@ const PostsRoutes = async (app) => {
   app.post("/api/posts", upload.array("images", 1), createPost);
   app.post("/api/comment", createCommentForPost);
   app.get("/api/posts/:id", getPostByPostId);
-  app.post('/api/posts/like', likePostRoute);
+  app.post("/api/posts/like", likePostRoute);
 };
 
 export default PostsRoutes;
