@@ -1,5 +1,5 @@
 import model from "./model.js";
-import User from '../userEntity/model.js';
+import User from "../userEntity/model.js";
 // obtain all posts in the DB
 export const getAllPosts = () => model.find();
 
@@ -42,33 +42,38 @@ export const createUser = (user) => model.create(user);
 //create post-Kay
 // export const createPost = (post) => model.create(post);
 export const createPost = async (post) => {
-    try {
-      const newPost = await model.create(post);
-      return newPost;
-    } catch (error) {
-      console.error("Error creating post:", error);
-      throw error;
-    }
-  };
+  try {
+    const newPost = await model.create(post);
+    return newPost;
+  } catch (error) {
+    console.error("Error creating post:", error);
+    throw error;
+  }
+};
 
-  export const likePost = async (postId, userId) => {
-    try {
-      // 更新帖子的 numberOfLikes
-      const updatedPost = await model.findByIdAndUpdate(postId, { $inc: { numberOfLikes: 1 } }, { new: true });
-  
-      // 将帖子 ID 添加到用户的 likedPosts 数组中
-      await User.findByIdAndUpdate(userId, { $addToSet: { likedPosts: postId } });
-  
-      return updatedPost;
-    } catch (error) {
-      console.error('Error liking post:', error);
-      throw error;
-    }};
+export const likePost = async (postId, userId) => {
+  try {
+    // 更新帖子的 numberOfLikes
+    const updatedPost = await model.findByIdAndUpdate(
+      postId,
+      { $inc: { numberOfLikes: 1 } },
+      { new: true }
+    );
 
-  export const getPostsWithLimit = async (startIndex, limit) => {
+    // 将帖子 ID 添加到用户的 likedPosts 数组中
+    await User.findByIdAndUpdate(userId, { $addToSet: { likedPosts: postId } });
+
+    return updatedPost;
+  } catch (error) {
+    console.error("Error liking post:", error);
+    throw error;
+  }
+};
+
+export const getPostsWithLimit = async (startIndex, limit) => {
   const result = await model
     .find({})
-    .sort({ numberOfLikes: -1 })
+    .sort({ numberOfLikes: -1, postDate: -1 })
     .skip(startIndex)
     .limit(limit);
 
