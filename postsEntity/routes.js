@@ -1,17 +1,16 @@
 import * as dao from "./dao.js";
 import axios from "axios";
-import multer from "multer"; //这个用来处理文件上传
+import multer from "multer";
 import User from "../userEntity/model.js";
 import Post from "../postsEntity/model.js";
 
 const API_KEY = process.env.GOOGLE_SEARCH_API_KEY;
 
-const storage = multer.memoryStorage(); // 在内存中存储文件
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const PostsRoutes = async (app) => {
   const getPostsByKeyword = async (req, res) => {
-    // console.log('getPostsByKeyword called');
     const { terms } = req.query;
     const response = await dao.getPostsByKeyword(terms);
     res.json(response);
@@ -26,16 +25,17 @@ const PostsRoutes = async (app) => {
   const getAllPosts = async (req, res) => {
     res.json(await dao.getAllPosts());
   };
+
   const getAllSortedPosts = async (req, res) => {
     res.json(await dao.getAllSortedPosts());
   };
+
   const getAPIResults = async (req, res) => {
     try {
       const { terms } = req.query;
       const response = await axios.get(
         `https://www.searchapi.io/api/v1/search?api_key=${API_KEY}&engine=google&q=${terms}`
       );
-      // console.log(results.organic_results);
       res.json(response.data.organic_results);
     } catch (error) {
       res.sendStatus(401);
@@ -63,12 +63,12 @@ const PostsRoutes = async (app) => {
         currentDate.getMonth(),
         currentDate.getDate()
       );
-
       const images = req.files.map((file) => ({
         data: file.buffer.toString("base64"),
         contentType: file.mimetype,
       }));
 
+      // 创建帖子
       const post = await dao.createPost({
         title,
         body,
@@ -79,11 +79,12 @@ const PostsRoutes = async (app) => {
         comment: [],
       });
 
-      // await User.findByIdAndUpdate(userId, { $push: { posts: newPostId } });
+      // 将新帖子的 ID 添加到用户的 posts 数组中
       const newPostId = post._id;
       const result = await User.findByIdAndUpdate(userId, {
         $push: { posts: newPostId },
       });
+
       console.log(result);
       res.json(post);
     } catch (error) {
@@ -92,27 +93,24 @@ const PostsRoutes = async (app) => {
         .status(500)
         .json({ success: false, message: "Internal server error" });
     }
-    // const currentUser = req.session["currentUser"];
-    // console.log(req.session["currentUser"]);
   };
 
   const likePostRoute = async (req, res) => {
     try {
-      const { postId, userId } = req.body;
-      console.log(
-        "Received like request for postId:",
-        postId,
-        "from userId:",
-        userId
-      );
-      const updatedPost = await dao.likePost(postId, userId);
-      console.log("Post liked successfully. Updated post:", updatedPost);
+      const { postIdToLike, userId } = req.body;
+      console.log('Received like request for postId:', postIdToLike, 'from userId:', userId);
+      const user = await User.findById(userId);
+  
+    if (user.likedPosts.includes(postIdToLike)) {
+      console.log('!!User has already liked this post.');
+      return res.status(409).json({ message: 'You have already liked this post.' });
+    }
+      const updatedPost = await dao.likePost(postIdToLike, userId);
+      console.log('Post liked successfully. Updated post:', updatedPost);
       res.json(updatedPost);
     } catch (error) {
-      console.error("Error liking post:", error);
-      res
-        .status(500)
-        .json({ success: false, message: "Internal server error" });
+      console.error('Error liking post:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
     }
   };
 
@@ -162,7 +160,8 @@ const PostsRoutes = async (app) => {
   app.post("/api/posts", upload.array("images", 1), createPost);
   app.post("/api/comment", createCommentForPost);
   app.get("/api/posts/:id", getPostByPostId);
-  app.post("/api/posts/like", likePostRoute);
+  app.post('/api/posts/like', likePostRoute);
 };
 
 export default PostsRoutes;
+
