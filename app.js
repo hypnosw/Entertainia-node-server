@@ -27,6 +27,11 @@ const sessionOptions = {
   secret: "any string",
   resave: false,
   saveUninitialized: false,
+  cookie:{
+    httpOnly:true,
+    sameSite:true,
+    maxAge:86400000,
+  }
 };
 if (process.env.NODE_ENV !== "development") {
   sessionOptions.proxy = true;
@@ -44,6 +49,6 @@ Entertainia(app);
 UserRoutes(app);
 PostsRoutes(app);
 // LikesRoutes(app);
-app.listen(process.env.PORT || 5001, () => {
-  console.log(`Server is running on port: ${process.env.PORT || 5001}`);
+app.listen(process.env.PORT || 5000, () => {
+  console.log(`Server is running on port: ${process.env.PORT || 5000}`);
 });
