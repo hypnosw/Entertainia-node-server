@@ -53,15 +53,13 @@ export const createPost = async (post) => {
 
 export const likePost = async (postId, userId) => {
   try {
-    // 更新帖子的 numberOfLikes
     const updatedPost = await model.findByIdAndUpdate(
       postId,
       { $inc: { numberOfLikes: 1 } },
       { new: true }
     );
 
-    // 将帖子 ID 添加到用户的 likedPosts 数组中
-    await User.findByIdAndUpdate(userId, { $addToSet: { likedPosts: postId } });
+    await User.findByIdAndUpdate(userId, { $push: { likedPosts: postId } });
 
     return updatedPost;
   } catch (error) {

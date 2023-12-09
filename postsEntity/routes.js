@@ -113,6 +113,9 @@ const PostsRoutes = async (app) => {
           .json({ message: "You have already liked this post." });
       }
       const updatedPost = await dao.likePost(postIdToLike, userId);
+
+      const newUser = await User.findById(userId);
+      req.session["currentUser"] = newUser;
       console.log("Post liked successfully. Updated post:", updatedPost);
       res.json(updatedPost);
     } catch (error) {
