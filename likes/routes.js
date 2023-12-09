@@ -1,4 +1,5 @@
 import * as dao from "./dao.js";
+import Post from "../postsEntity/model.js";
 
 function LikesRoutes(app) {
   const findAllLikes = async (req, res) => {};
@@ -6,7 +7,11 @@ function LikesRoutes(app) {
     const userId = req.params.userId;
     const postId = req.params.postId;
     const likes = await dao.createUserLikesPost(userId, postId);
-    res.json(likes);
+    // const result = await Post.findByIdAndUpdate(
+    //   postId,
+    //   { $inc: { numberOfLikes: 1 } },
+    //   { new: true }
+    // );
   };
 
   const findPostsThatUserLikes = async (req, res) => {

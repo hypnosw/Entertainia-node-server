@@ -27,11 +27,11 @@ const sessionOptions = {
   secret: "any string",
   resave: false,
   saveUninitialized: false,
-  cookie:{
-    httpOnly:true,
-    sameSite:true,
-    maxAge:86400000,
-  }
+  cookie: {
+    httpOnly: true,
+    sameSite: true,
+    maxAge: 86400000,
+  },
 };
 if (process.env.NODE_ENV !== "development") {
   sessionOptions.proxy = true;
