@@ -7,7 +7,6 @@ import Entertainia from "./src/entertainia.js";
 import UserRoutes from "./userEntity/routes.js";
 import PostsRoutes from "./postsEntity/routes.js";
 // import LikesRoutes from "./likes/routes.js";
-mongoose.connect(process.env.LOCAL_DB_STRING);
 
 // DB_CONNECTION_STRING should be the remote atlas string, LOCAL is local string
 const CONNECTION_STRING =
@@ -27,6 +26,11 @@ const sessionOptions = {
   secret: "any string",
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: true,
+    maxAge: 86400000,
+  },
 };
 if (process.env.NODE_ENV !== "development") {
   sessionOptions.proxy = true;
@@ -44,6 +48,7 @@ Entertainia(app);
 UserRoutes(app);
 PostsRoutes(app);
 // LikesRoutes(app);
+
 app.listen(process.env.PORT || 4000, () => {
   console.log(`Server is running on port: ${process.env.PORT || 4000}`);
 });
