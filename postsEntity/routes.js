@@ -98,19 +98,28 @@ const PostsRoutes = async (app) => {
   const likePostRoute = async (req, res) => {
     try {
       const { postIdToLike, userId } = req.body;
-      console.log('Received like request for postId:', postIdToLike, 'from userId:', userId);
+      console.log(
+        "Received like request for postId:",
+        postIdToLike,
+        "from userId:",
+        userId
+      );
       const user = await User.findById(userId);
-  
-    if (user.likedPosts.includes(postIdToLike)) {
-      console.log('!!User has already liked this post.');
-      return res.status(409).json({ message: 'You have already liked this post.' });
-    }
+
+      if (user.likedPosts.includes(postIdToLike)) {
+        console.log("!!User has already liked this post.");
+        return res
+          .status(409)
+          .json({ message: "You have already liked this post." });
+      }
       const updatedPost = await dao.likePost(postIdToLike, userId);
-      console.log('Post liked successfully. Updated post:', updatedPost);
+      console.log("Post liked successfully. Updated post:", updatedPost);
       res.json(updatedPost);
     } catch (error) {
-      console.error('Error liking post:', error);
-      res.status(500).json({ success: false, message: 'Internal server error' });
+      console.error("Error liking post:", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
     }
   };
 
@@ -122,7 +131,7 @@ const PostsRoutes = async (app) => {
 
   const createCommentForPost = async (req, res) => {
     try {
-      const { content, userId, postId } = req.body;
+      const { content, userId, postId, userNickname } = req.body;
       const currentDate = new Date();
       const commentDate = new Date(
         currentDate.getFullYear(),
@@ -136,6 +145,7 @@ const PostsRoutes = async (app) => {
           $push: {
             comment: {
               userId: userId,
+              userNickname: userNickname,
               content: content,
               commentDate: commentDate,
             },
@@ -160,8 +170,7 @@ const PostsRoutes = async (app) => {
   app.post("/api/posts", upload.array("images", 1), createPost);
   app.post("/api/comment", createCommentForPost);
   app.get("/api/posts/:id", getPostByPostId);
-  app.post('/api/posts/like', likePostRoute);
+  app.post("/api/posts/like", likePostRoute);
 };
 
 export default PostsRoutes;
-
