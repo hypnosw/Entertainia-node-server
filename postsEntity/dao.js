@@ -71,7 +71,7 @@ export const likePost = async (postId, userId) => {
 export const getPostsWithLimit = async (startIndex, limit) => {
   const result = await model
     .find({})
-    .sort({ postDate: -1 })
+    .sort({ postDate: -1, postId: 1 })
     .skip(startIndex)
     .limit(limit);
 
