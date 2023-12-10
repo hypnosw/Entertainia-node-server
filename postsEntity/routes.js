@@ -57,12 +57,8 @@ const PostsRoutes = async (app) => {
   const createPost = async (req, res) => {
     try {
       const { title, body, userId } = req.body;
-      const currentDate = new Date();
-      const postDate = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        currentDate.getDate()
-      );
+      const postDate = new Date();
+
       const images = req.files.map((file) => ({
         data: file.buffer.toString("base64"),
         contentType: file.mimetype,
